@@ -3,6 +3,17 @@ from data_processing import get_data
 from visualization import create_map, create_bar_chart
 from datetime import datetime, time
 
+# Configurar la página
+st.set_page_config(
+    page_title="App de Análisis de Llamadas",
+    layout="wide",  # Opciones: 'centered' o 'wide'
+    initial_sidebar_state="expanded",  # Control del estado de la barra lateral
+)
+
+# Títulos y descripciones
+st.title("Análisis de Llamadas de Emergencia")
+st.markdown("Esta aplicación permite analizar los incidentes registrados en la base de datos.")
+
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
     "Selecciona la variable a analizar:",
