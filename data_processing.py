@@ -1,11 +1,15 @@
 import pandas as pd
 import json
 from pymongo import MongoClient
+import os
+import streamlit as st
 
+MONGODB_URI = st.secrets["MONGODB"]["URI"]
+client = MongoClient(MONGODB_URI)
 # Conexión a MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['llamadas123']
-collection = db['llamadas2019']
+#client = MongoClient('mongodb://localhost:27017/')
+#db = client['llamadas123']
+#collection = db['llamadas2019']
 
 def get_data(opcion_analisis, start_datetime, end_datetime):
     client = MongoClient('mongodb://localhost:27017/')
