@@ -3,16 +3,15 @@ from data_processing import get_data
 from visualization import create_map, create_bar_chart
 from datetime import datetime, time
 
-# Configurar la página
+# Configuración de la página
 st.set_page_config(
-    page_title="App de Análisis de Llamadas",
+    page_title="Análisis de Llamadas",
     layout="wide",  # Opciones: 'centered' o 'wide'
-    initial_sidebar_state="expanded",  # Control del estado de la barra lateral
+    initial_sidebar_state="expanded"  # Control del estado de la barra lateral
 )
 
-# Títulos y descripciones
+# Crear un título principal
 st.title("Análisis de Llamadas de Emergencia")
-st.markdown("Esta aplicación permite analizar los incidentes registrados en la base de datos.")
 
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
@@ -47,7 +46,7 @@ else:
     # Mostrar mapa o gráfico en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         fig = create_map(df, geojson, color_var, title)
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
     else:
         fig = create_bar_chart(df, title)
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
