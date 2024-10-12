@@ -11,13 +11,10 @@ def create_map(df, geojson, color_var, title):
                                center={"lat": 4.2910, "lon": -74.1221}, 
                                mapbox_style="carto-positron", 
                                zoom=8.6, 
-                               width=900, 
-                               height=800,
+                               width=None,  # Ajustar automáticamente
+                               height=None,  # Ajustar automáticamente
                                title=title)
     return fig
-
-# Asegurarse de que el gráfico se escale bien
-st.plotly_chart(fig, use_container_width=True)  # Configuración responsiva
 
 # Función para crear el gráfico de barras
 def create_bar_chart(df, title):
@@ -29,4 +26,3 @@ def create_bar_chart(df, title):
                  labels={'INCIDENTES': 'Número de Incidentes', 'LOCALIDAD': 'Localidad'},
                  color_discrete_sequence=px.colors.qualitative.Vivid)
     return fig
-
