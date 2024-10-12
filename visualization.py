@@ -16,6 +16,9 @@ def create_map(df, geojson, color_var, title):
                                title=title)
     return fig
 
+# Asegurarse de que el gráfico se escale bien
+st.plotly_chart(fig, use_container_width=True)  # Configuración responsiva
+
 # Función para crear el gráfico de barras
 def create_bar_chart(df, title):
     fig = px.bar(df, 
