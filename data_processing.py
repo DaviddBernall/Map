@@ -1,19 +1,18 @@
 import pandas as pd
 import json
 from pymongo import MongoClient
-import os
 import streamlit as st
 
+# Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
-# Conexión a MongoDB
-#client = MongoClient('mongodb://localhost:27017/')
-#db = client['llamadas123']
-#collection = db['llamadas2019']
+db = client['Llamadas123']  # Base de datos de llamadas
+collection = db['llamadas2019']  # Colección del año 2019
 
 def get_data(opcion_analisis, start_datetime, end_datetime):
-    client = MongoClient('mongodb://localhost:27017/')
-    db = client['llamadas123']
+    # Usar la conexión MongoDB definida anteriormente
+    client = MongoClient(MONGODB_URI)
+    db = client['Llamadas123']
     collection = db['llamadas2019']
 
     # Pipeline básico para contar incidentes filtrados por fecha y hora
