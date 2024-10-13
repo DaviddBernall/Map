@@ -1,3 +1,4 @@
+# data_processing.py
 import pandas as pd
 import json
 from pymongo import MongoClient
@@ -13,7 +14,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
-        collection_name = "llamadas2019"
+        collection_name = "llamadas2019_2"
     elif year == 2020:
         collection_name = "llamadas2020"
     elif year == 2021:
@@ -32,8 +33,8 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime.isoformat()+'Z',
-                "$lte": end_datetime.isoformat()+'Z'  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_datetime,  # Usar el formato ISO
+                "$lt": end_datetime # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
