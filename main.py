@@ -43,7 +43,7 @@ start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
 # Obtener los datos con el filtro de fechas y horas
-df, geojson, color_var, title = get_data(opcion_analisis, opcion_año, start_datetime, end_datetime)
+df, geojson, color_var, title = get_data(opcion_analisis, start_month_day, end_month_day, start_time, end_time)
 
 # Verificar si se cargaron los datos
 if df.empty:
