@@ -32,44 +32,20 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     start_date_str = start_datetime.strftime("%d/%m/%Y")
     end_date_str = end_datetime.strftime("%d/%m/%Y")
 
-    # Asegurarse de que el rango de horas incluya todo el día
-    start_time_str = "00:00:00"  # Comenzar a las 00:00:00
-    end_time_str = "23:59:59"      # Terminar a las 23:59:59
+    # Obtener la hora mínima y máxima para el filtro de hora
+    start_hour_str = start_datetime.strftime("%H:%M:%S")
+    end_hour_str = end_datetime.strftime("%H:%M:%S")
 
-    # Crear las cadenas de fecha y hora completas para el rango de consulta
-    start_datetime_str = f"{start_date_str} {start_time_str}"
-    end_datetime_str = f"{end_date_str} {end_time_str}"
-
-    # Modificar el match_stage para comparar correctamente la fecha y la hora
+    # Filtro separado para la fecha y hora
     match_stage = {
         "$match": {
-            "$expr": {  # Usar $expr para poder realizar operaciones con las fechas
-                "$and": [
-                    {
-                        "$gte": [
-                            {
-                                "$concat": [
-                                    "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL",
-                                    " ",
-                                    "$HORA_INICIO_DESPLAZAMIENTO_MOVIL"
-                                ]
-                            },
-                            start_datetime_str
-                        ]
-                    },
-                    {
-                        "$lte": [
-                            {
-                                "$concat": [
-                                    "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL",
-                                    " ",
-                                    "$HORA_INICIO_DESPLAZAMIENTO_MOVIL"
-                                ]
-                            },
-                            end_datetime_str
-                        ]
-                    }
-                ]
+            "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                "$gte": start_date_str,
+                "$lte": end_date_str
+            },
+            "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                "$gte": start_hour_str,
+                "$lte": end_hour_str
             }
         }
     }
