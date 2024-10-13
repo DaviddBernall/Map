@@ -13,7 +13,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
-        collection_name = "llamadas2019"
+        collection_name = "llamadas2019_2"
     elif year == 2020:
         collection_name = "llamadas2020"
     elif year == 2021:
