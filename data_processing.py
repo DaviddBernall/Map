@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -28,11 +28,10 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Convertir las fechas a formato string dd/mm/yyyy
+    # Crear cadenas de fecha y hora
     start_date_str = start_datetime.strftime("%d/%m/%Y")
     end_date_str = end_datetime.strftime("%d/%m/%Y")
 
-    # Obtener la hora de inicio y fin como strings
     start_time_str = start_datetime.strftime("%H:%M:%S")
     end_time_str = end_datetime.strftime("%H:%M:%S")
 
@@ -40,12 +39,24 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     start_datetime_str = f"{start_date_str} {start_time_str}"
     end_datetime_str = f"{end_date_str} {end_time_str}"
 
-    # Pipeline básico para contar incidentes filtrados por fecha y hora
+    # Modificar el match_stage para comparar correctamente la fecha y la hora
     match_stage = {
         "$match": {
-            "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime_str,
-                "$lte": end_datetime_str
+            "$expr": {  # Usar $expr para poder realizar operaciones con las fechas
+                "$and": [
+                    {
+                        "$gte": [
+                            {"$dateFromString": {"dateString": "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", "format": "%d/%m/%Y"}},
+                            start_datetime_str
+                        ]
+                    },
+                    {
+                        "$lte": [
+                            {"$dateFromString": {"dateString": "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", "format": "%d/%m/%Y"}},
+                            end_datetime_str
+                        ]
+                    }
+                ]
             }
         }
     }
