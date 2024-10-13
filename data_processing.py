@@ -7,13 +7,10 @@ import streamlit as st
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
-collection = db['llamadas2019']  # Colección del año 2019
 
-def get_data(opcion_analisis, start_datetime, end_datetime):
-    # Usar la conexión MongoDB definida anteriormente
-    client = MongoClient(MONGODB_URI)
-    db = client['Llamadas123']
-    collection = db['llamadas2019']
+def get_data(opcion_analisis, año, start_datetime, end_datetime):
+    # Seleccionar la colección según el año
+    collection = db[f'llamadas{año}']
 
     # Pipeline básico para contar incidentes filtrados por fecha y hora
     match_stage = {
