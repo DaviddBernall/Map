@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -32,8 +32,8 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime,
-                "$lt": end_datetime  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_datetime.isoformat(),
+                "$lt": end_datetime.isoformat()  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
