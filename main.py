@@ -20,23 +20,12 @@ st.sidebar.markdown("### Filtro de fecha")
 start_date = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31))
 end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31))
 
-# Filtro de hora
-st.sidebar.markdown("### Filtro de hora")
-start_time, end_time = st.sidebar.slider(
-    "Selecciona el rango de horas",
-    value=(time(0, 0), time(23, 59)),
-    format="HH:mm"
-)
+# Filtros de hora
+start_time = st.sidebar.time_input("Hora de inicio", value=time(0, 0))
+end_time = st.sidebar.time_input("Hora de fin", value=time(23, 59))
 
-# Combinar fechas y horas seleccionadas
-start_datetime = datetime.combine(start_date, start_time)
-end_datetime = datetime.combine(end_date, end_time)
-
-# Mostrar valores seleccionados (opcional para depuración)
-st.write(f"Start Datetime: {start_datetime}, End Datetime: {end_datetime}")
-
-# Obtener los datos
-df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
+# Llamada a la función get_data con fecha y hora por separado
+df, geojson, color_var, title = get_data(opcion_analisis, start_date, end_date, start_time, end_time)
 
 # Verificar si el DataFrame tiene datos
 if df.empty:
