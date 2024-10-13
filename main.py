@@ -6,8 +6,8 @@ from datetime import datetime, time
 # Configuración de la página
 st.set_page_config(
     page_title="Análisis de Llamadas",
-    layout="wide",  
-    initial_sidebar_state="expanded"
+    layout="wide",  # Opciones: 'centered' o 'wide'
+    initial_sidebar_state="expanded"  # Control del estado de la barra lateral
 )
 
 # Crear un título principal
@@ -37,7 +37,7 @@ start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
 # Obtener los datos con el filtro de fechas y horas
-df, geojson, color_var, title = get_data(opcion_analisis, start_date, end_date, start_time, end_time)
+df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
 
 # Verificar si el DataFrame tiene datos
 if df.empty:
