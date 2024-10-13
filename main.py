@@ -25,10 +25,10 @@ opcion_analisis = st.sidebar.selectbox(
     ("Número de Incidentes", "Prioridad")
 )
 
-# Filtro de fecha (rango de fechas)
-st.sidebar.markdown("### Filtro de fecha")
-start_date = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1))
-end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31))
+# Filtro de fecha basado solo en mes y día (sin año)
+st.sidebar.markdown("### Filtro de mes y día")
+start_month_day = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1)).strftime("%m-%d")
+end_month_day = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31)).strftime("%m-%d")
 
 # Filtro de hora con un slider (rango de horas)
 st.sidebar.markdown("### Filtro de hora")
