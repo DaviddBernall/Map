@@ -1,4 +1,3 @@
-# main.py
 import streamlit as st
 from data_processing import get_data
 from visualization import create_map, create_bar_chart
@@ -43,13 +42,14 @@ end_hour = st.sidebar.slider(
 
 # Crear las horas completas para el rango
 start_time = time(start_hour, 0)  # Solo la hora completa
-end_time = time(end_hour, 59)      # Termina al final de la hora
+end_time = time(end_hour, 59)     # Termina al final de la hora
 # Combinar fechas y horas seleccionadas
 start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
-st.write("Fecha de inicio:", start_datetime)
-st.write("Fecha de fin:", end_datetime)
+# Mostrar los valores seleccionados (opcional, para depuración)
+st.write("Fecha y hora de inicio:", start_datetime)
+st.write("Fecha y hora de fin:", end_datetime)
 
 # Obtener los datos con el filtro de fechas y horas
 df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
