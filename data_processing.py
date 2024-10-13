@@ -11,11 +11,6 @@ db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
     # Determinar la colección a usar según el año de start_date
-
-    # Verificar las fechas de inicio y fin
-    print("Start datetime:", start_datetime)
-    print("End datetime:", end_datetime)
-    
     year = start_date.year
     if year == 2019:
         collection_name = "llamadas2019"
@@ -36,6 +31,10 @@ def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
     start_datetime = datetime.combine(start_date, start_time).isoformat()
     end_datetime = datetime.combine(end_date, end_time).isoformat()
 
+    # Verificar las fechas de inicio y fin
+    print("Start datetime:", start_datetime)
+    print("End datetime:", end_datetime)
+    
     # Filtro en el pipeline
     match_stage = {
         "$match": {
