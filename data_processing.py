@@ -4,15 +4,14 @@ from pymongo import MongoClient
 import streamlit as st
 from datetime import datetime, timedelta
 
-start_datetime_iso = start_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
-end_datetime_iso = end_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
-
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, start_datetime, end_datetime):
+    start_datetime_iso = start_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
+    end_datetime_iso = end_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
