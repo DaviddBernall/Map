@@ -32,9 +32,6 @@ start_time, end_time = st.sidebar.slider(
 start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
-# Mostrar valores seleccionados (opcional para depuración)
-st.write(f"Start Datetime: {start_datetime}, End Datetime: {end_datetime}")
-
 # Obtener los datos
 df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
 
