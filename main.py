@@ -37,6 +37,8 @@ start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 end_datetime = end_datetime.replace(hour=end_time.hour, minute=end_time.minute, second=59)
 
+st.write("Fecha de inicio:", start_datetime)
+st.write("Fecha de fin:", end_datetime)
 # Obtener los datos con el filtro de fechas y horas
 df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
 
