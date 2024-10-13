@@ -13,7 +13,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
-        collection_name = "llamadas2019_2"
+        collection_name = "llamadas2019"
     elif year == 2020:
         collection_name = "llamadas2020"
     elif year == 2021:
@@ -28,24 +28,12 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Convertir las fechas a cadenas para el filtrado
-    start_date_str = start_datetime.strftime("%d/%m/%Y")
-    end_date_str = end_datetime.strftime("%d/%m/%Y")
-
-    # Obtener la hora mínima y máxima para el filtro de hora
-    start_hour_str = start_datetime.strftime("%H:%M:%S")
-    end_hour_str = end_datetime.strftime("%H:%M:%S")
-
-    # Filtro separado para la fecha y hora
+    # Pipeline básico para contar incidentes filtrados por fecha y hora
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_date_str,
-                "$lte": end_date_str
-            },
-            "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_hour_str,
-                "$lte": end_hour_str
+                "$gte": start_datetime,
+                "$lt": end_datetime  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
