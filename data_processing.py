@@ -11,6 +11,11 @@ db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
     # Determinar la colección a usar según el año de start_date
+
+    # Verificar las fechas de inicio y fin
+    print("Start datetime:", start_datetime)
+    print("End datetime:", end_datetime)
+    
     year = start_date.year
     if year == 2019:
         collection_name = "llamadas2019"
