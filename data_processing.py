@@ -2,6 +2,7 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
+from datetime import datetime, timedelta
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -13,16 +14,19 @@ def get_data(opcion_analisis, year, start_date, end_date, start_time, end_time):
     collection_name = f'llamadas{year}'
     collection = db[collection_name]
 
-    # Combinar las fechas y horas
+    # Crear objetos datetime para las fechas y horas
     start_datetime = datetime.combine(start_date, start_time)
     end_datetime = datetime.combine(end_date, end_time)
+
+    # Para asegurarnos de que la hora de fin es inclusiva
+    end_datetime += timedelta(days=1)  # Añadimos un día para incluir el último día completo
 
     # Pipeline básico para contar incidentes filtrados por fecha y hora
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
                 "$gte": start_datetime,
-                "$lte": end_datetime
+                "$lt": end_datetime  # Cambiamos a $lt para hacer el rango inclusivo
             }
         }
     }
