@@ -13,6 +13,12 @@ st.set_page_config(
 # Crear un título principal
 st.title("Análisis de Llamadas de Emergencia")
 
+# Crear un sidebar para seleccionar el año
+opcion_año = st.sidebar.selectbox(
+    "Selecciona el año:",
+    (2019, 2020, 2021)  # Añade los años que correspondan a tus colecciones
+)
+
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
     "Selecciona la variable a analizar:",
@@ -37,7 +43,7 @@ start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
 # Obtener los datos con el filtro de fechas y horas
-df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
+df, geojson, color_var, title = get_data(opcion_analisis, opcion_año, start_datetime, end_datetime)
 
 # Verificar si el DataFrame tiene datos
 if df.empty:
