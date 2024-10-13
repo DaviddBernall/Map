@@ -33,7 +33,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
                 "$gte": start_datetime.isoformat()+'Z',
-                "$lt": end_datetime.isoformat()+'Z'  # Cambiado a $lt para hacer el rango exclusivo
+                "$lte": end_datetime.isoformat()+'Z'  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
