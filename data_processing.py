@@ -10,9 +10,6 @@ client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, start_datetime, end_datetime):
-    # Convertir a formato ISO 8601
-    start_datetime_iso = start_datetime.isoformat().replace(" ", "T") + '.000+00:00'  # Agregar '.000+00:00'
-    end_datetime_iso = end_datetime.isoformat().replace(" ", "T") + '.000+00:00'  # Agregar '.000+00:00'
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
@@ -35,8 +32,8 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime_iso,
-                "$lt": end_datetime_iso  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_datetime.isoformat()+'Z',
+                "$lt": end_datetime.isoformat()+'Z'  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
