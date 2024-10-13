@@ -27,16 +27,16 @@ def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
 
     collection = db[collection_name]
 
-    # Filtros por separado para fecha y hora
+    # Crear las versiones de fecha y hora en formato ISO y ajustar el pipeline para comparar correctamente
+    start_datetime = datetime.combine(start_date, start_time).isoformat()
+    end_datetime = datetime.combine(end_date, end_time).isoformat()
+
+    # Filtro en el pipeline
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_date.strftime("%d/%m/%Y"),
-                "$lte": end_date.strftime("%d/%m/%Y")
-            },
-            "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_time.strftime("%H:%M:%S"),
-                "$lte": end_time.strftime("%H:%M:%S")
+                "$gte": start_datetime,  # Filtrar por fecha y hora de inicio
+                "$lte": end_datetime     # Filtrar por fecha y hora de fin
             }
         }
     }
@@ -47,7 +47,7 @@ def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": { "$sum": 1 }  # Contar el número de incidentes
+                    "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
                 }
             }
         ]
