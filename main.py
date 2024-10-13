@@ -45,14 +45,15 @@ end_datetime = datetime.combine(end_date, end_time)
 # Obtener los datos con el filtro de fechas y horas
 df, geojson, color_var, title = get_data(opcion_analisis, opcion_año, start_datetime, end_datetime)
 
-# Verificar si el DataFrame tiene datos
+# Verificar si se cargaron los datos
 if df.empty:
     st.warning("No se encontraron datos para el rango de fechas y horas seleccionado.")
 else:
+    st.write("Datos cargados correctamente en el DataFrame")
     # Mostrar mapa o gráfico en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         fig = create_map(df, geojson, color_var, title)
-        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
+        st.plotly_chart(fig, use_container_width=True)
     else:
         fig = create_bar_chart(df, title)
-        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
+        st.plotly_chart(fig, use_container_width=True)
