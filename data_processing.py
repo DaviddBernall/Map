@@ -9,9 +9,9 @@ MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
-def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
-    # Determinar la colección a usar según el año de start_date
-    year = start_date.year
+def get_data(opcion_analisis, start_datetime, end_datetime):
+    # Determinar la colección a usar según el año de start_datetime
+    year = start_datetime.year
     if year == 2019:
         collection_name = "llamadas2019"
     elif year == 2020:
@@ -25,54 +25,55 @@ def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
     else:
         raise ValueError("Año fuera de rango")
 
+    # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Crear las versiones de fecha y hora en formato ISO y ajustar el pipeline para comparar correctamente
-    start_datetime = datetime.combine(start_date, start_time).isoformat()
-    end_datetime = datetime.combine(end_date, end_time).isoformat()
+    # Separar las fechas y horas en el filtro
+    start_date_str = start_datetime.strftime("%d/%m/%Y")
+    end_date_str = end_datetime.strftime("%d/%m/%Y")
+    start_time_str = start_datetime.strftime("%H:%M:%S")
+    end_time_str = end_datetime.strftime("%H:%M:%S")
 
-    # Verificar las fechas de inicio y fin
-    print("Start datetime:", start_datetime)
-    print("End datetime:", end_datetime)
-    
-    # Filtro en el pipeline
-    match_stage = {
-        "$match": {
-            "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime,  # Filtrar por fecha y hora de inicio
-                "$lte": end_datetime     # Filtrar por fecha y hora de fin
+    # Pipeline para filtrar por fecha y hora
+    pipeline = [
+        {
+            "$match": {
+                "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                    "$gte": start_date_str,
+                    "$lte": end_date_str
+                },
+                "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                    "$gte": start_time_str,
+                    "$lte": end_time_str
+                }
             }
         }
-    }
+    ]
 
+    # Pipeline para agrupar por opción seleccionada
     if opcion_analisis == "Número de Incidentes":
-        pipeline = [
-            match_stage,
+        pipeline.append(
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
                     "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
                 }
             }
-        ]
+        )
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df.rename(columns={'_id': 'LOCALIDAD'}, inplace=True)
         color_var = "INCIDENTES"
         title = "Número de Incidentes por Localidad"
 
     elif opcion_analisis == "Prioridad":
-        pipeline = [
-            match_stage,
+        pipeline.append(
             {
                 "$group": {
                     "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
                     "INCIDENTES": {"$sum": 1}
                 }
-            },
-            {
-                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
             }
-        ]
+        )
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])
         df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])
