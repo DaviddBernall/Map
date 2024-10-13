@@ -6,18 +6,12 @@ from datetime import datetime, time
 # Configuración de la página
 st.set_page_config(
     page_title="Análisis de Llamadas",
-    layout="wide",  # Opciones: 'centered' o 'wide'
-    initial_sidebar_state="expanded"  # Control del estado de la barra lateral
+    layout="wide",  
+    initial_sidebar_state="expanded"
 )
 
 # Crear un título principal
 st.title("Análisis de Llamadas de Emergencia")
-
-# Crear un sidebar para seleccionar el año
-opcion_año = st.sidebar.selectbox(
-    "Selecciona el año:",
-    (2019, 2020, 2021)  # Añade los años que correspondan a tus colecciones
-)
 
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
@@ -25,10 +19,10 @@ opcion_analisis = st.sidebar.selectbox(
     ("Número de Incidentes", "Prioridad")
 )
 
-# Filtro de fecha basado solo en mes y día (sin año)
-st.sidebar.markdown("### Filtro de mes y día")
-start_month_day = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1)).strftime("%m-%d")
-end_month_day = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31)).strftime("%m-%d")
+# Filtro de fecha (rango de fechas) y utilizamos el año para cambiar de colección
+st.sidebar.markdown("### Filtro de fecha")
+start_date = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1))
+end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31))
 
 # Filtro de hora con un slider (rango de horas)
 st.sidebar.markdown("### Filtro de hora")
@@ -38,22 +32,21 @@ start_time, end_time = st.sidebar.slider(
     format="HH:mm"
 )
 
-# Combinar fechas y horas seleccionadas
-start_datetime = datetime.combine(start_date, start_time)
-end_datetime = datetime.combine(end_date, end_time)
+# Obtener el año del rango de fechas seleccionado para cambiar de colección
+start_year = start_date.year
+end_year = end_date.year
 
-# Obtener los datos con el filtro de fechas y horas
-df, geojson, color_var, title = get_data(opcion_analisis, start_month_day, end_month_day, start_time, end_time)
+# Obtener los datos de la colección según el año y el filtro de fechas/horas
+df, geojson, color_var, title = get_data(opcion_analisis, start_year, start_date, end_date, start_time, end_time)
 
-# Verificar si se cargaron los datos
+# Verificar si el DataFrame tiene datos
 if df.empty:
     st.warning("No se encontraron datos para el rango de fechas y horas seleccionado.")
 else:
-    st.write("Datos cargados correctamente en el DataFrame")
     # Mostrar mapa o gráfico en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         fig = create_map(df, geojson, color_var, title)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
     else:
         fig = create_bar_chart(df, title)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)  # Asegurarse de que el gráfico use todo el ancho
