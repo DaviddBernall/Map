@@ -42,14 +42,13 @@ end_hour = st.sidebar.slider(
 
 # Crear las horas completas para el rango
 start_time = time(start_hour, 0)  # Solo la hora completa
-end_time = time(end_hour, 59)     # Termina al final de la hora
+end_time = time(end_hour, 59)      # Termina al final de la hora
 # Combinar fechas y horas seleccionadas
 start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
 
-# Mostrar los valores seleccionados (opcional, para depuración)
-st.write("Fecha y hora de inicio:", start_datetime)
-st.write("Fecha y hora de fin:", end_datetime)
+st.write("Fecha de inicio:", start_datetime)
+st.write("Fecha de fin:", end_datetime)
 
 # Obtener los datos con el filtro de fechas y horas
 df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
@@ -58,6 +57,10 @@ df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_da
 if df.empty:
     st.warning("No se encontraron datos para el rango de fechas y horas seleccionado.")
 else:
+    # Mostrar tabla con los datos filtrados
+    st.subheader("Datos Filtrados")
+    st.dataframe(df)  # Mostrar tabla de datos filtrados
+
     # Mostrar mapa o gráfico en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         fig = create_map(df, geojson, color_var, title)
