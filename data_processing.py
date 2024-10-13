@@ -28,14 +28,15 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Crear cadenas de fecha y hora
+    # Convertir las fechas a cadenas para el filtrado
     start_date_str = start_datetime.strftime("%d/%m/%Y")
     end_date_str = end_datetime.strftime("%d/%m/%Y")
 
-    start_time_str = start_datetime.strftime("%H:%M:%S")
-    end_time_str = end_datetime.strftime("%H:%M:%S")
+    # Asegurarse de que el rango de horas incluya todo el día
+    start_time_str = "00:00:00"  # Comenzar a las 00:00:00
+    end_time_str = "23:59:59"      # Terminar a las 23:59:59
 
-    # Crear la fecha y hora completa para el rango de consulta
+    # Crear las cadenas de fecha y hora completas para el rango de consulta
     start_datetime_str = f"{start_date_str} {start_time_str}"
     end_datetime_str = f"{end_date_str} {end_time_str}"
 
@@ -46,13 +47,25 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
                 "$and": [
                     {
                         "$gte": [
-                            {"$dateFromString": {"dateString": "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", "format": "%d/%m/%Y"}},
+                            {
+                                "$concat": [
+                                    "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL",
+                                    " ",
+                                    "$HORA_INICIO_DESPLAZAMIENTO_MOVIL"
+                                ]
+                            },
                             start_datetime_str
                         ]
                     },
                     {
                         "$lte": [
-                            {"$dateFromString": {"dateString": "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", "format": "%d/%m/%Y"}},
+                            {
+                                "$concat": [
+                                    "$FECHA_INICIO_DESPLAZAMIENTO_MOVIL",
+                                    " ",
+                                    "$HORA_INICIO_DESPLAZAMIENTO_MOVIL"
+                                ]
+                            },
                             end_datetime_str
                         ]
                     }
