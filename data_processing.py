@@ -4,6 +4,9 @@ from pymongo import MongoClient
 import streamlit as st
 from datetime import datetime, timedelta
 
+start_datetime_iso = start_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
+end_datetime_iso = end_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
+
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
@@ -32,8 +35,8 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime.isoformat(),
-                "$lt": end_datetime.isoformat()  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_datetime_iso,
+                "$lt": end_datetime_iso  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
