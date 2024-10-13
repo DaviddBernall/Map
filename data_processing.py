@@ -9,9 +9,9 @@ MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
-def get_data(opcion_analisis, start_datetime, end_datetime):
-    # Determinar la colección a usar según el año de start_datetime
-    year = start_datetime.year
+def get_data(opcion_analisis, start_date, end_date, start_time, end_time):
+    # Determinar la colección a usar según el año de start_date
+    year = start_date.year
     if year == 2019:
         collection_name = "llamadas2019"
     elif year == 2020:
@@ -25,15 +25,18 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     else:
         raise ValueError("Año fuera de rango")
 
-    # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Pipeline básico para contar incidentes filtrados por fecha y hora
+    # Filtros por separado para fecha y hora
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime,
-                "$lt": end_datetime  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_date.strftime("%d/%m/%Y"),
+                "$lte": end_date.strftime("%d/%m/%Y")
+            },
+            "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                "$gte": start_time.strftime("%H:%M:%S"),
+                "$lte": end_time.strftime("%H:%M:%S")
             }
         }
     }
@@ -44,7 +47,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
+                    "INCIDENTES": { "$sum": 1 }  # Contar el número de incidentes
                 }
             }
         ]
