@@ -19,10 +19,10 @@ opcion_analisis = st.sidebar.selectbox(
     ("Número de Incidentes", "Prioridad")
 )
 
-# Filtro de fecha (rango de fechas) y utilizamos el año para cambiar de colección
+# Filtro de fecha (rango de fechas)
 st.sidebar.markdown("### Filtro de fecha")
-start_date = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1))
-end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31))
+start_date = st.sidebar.date_input("Fecha de inicio", value=datetime(2019, 1, 1), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31))
+end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31))
 
 # Filtro de hora con un slider (rango de horas)
 st.sidebar.markdown("### Filtro de hora")
@@ -32,12 +32,12 @@ start_time, end_time = st.sidebar.slider(
     format="HH:mm"
 )
 
-# Obtener el año del rango de fechas seleccionado para cambiar de colección
-start_year = start_date.year
-end_year = end_date.year
+# Combinar fechas y horas seleccionadas
+start_datetime = datetime.combine(start_date, start_time)
+end_datetime = datetime.combine(end_date, end_time)
 
-# Obtener los datos de la colección según el año y el filtro de fechas/horas
-df, geojson, color_var, title = get_data(opcion_analisis, start_year, start_date, end_date, start_time, end_time)
+# Obtener los datos con el filtro de fechas y horas
+df, geojson, color_var, title = get_data(opcion_analisis, start_date, end_date, start_time, end_time)
 
 # Verificar si el DataFrame tiene datos
 if df.empty:
