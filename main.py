@@ -1,3 +1,4 @@
+# main.py
 import streamlit as st
 from data_processing import get_data
 from visualization import create_map, create_bar_chart
@@ -49,6 +50,7 @@ end_datetime = datetime.combine(end_date, end_time)
 
 st.write("Fecha de inicio:", start_datetime)
 st.write("Fecha de fin:", end_datetime)
+
 # Obtener los datos con el filtro de fechas y horas
 df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_datetime)
 
