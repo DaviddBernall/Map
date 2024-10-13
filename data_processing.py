@@ -10,8 +10,9 @@ client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, start_datetime, end_datetime):
-    start_datetime_iso = start_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
-    end_datetime_iso = end_datetime.isoformat() + 'Z'  # Agregar 'Z' para indicar UTC
+    # Convertir a formato ISO 8601
+    start_datetime_iso = start_datetime.isoformat().replace(" ", "T") + '.000+00:00'  # Agregar '.000+00:00'
+    end_datetime_iso = end_datetime.isoformat().replace(" ", "T") + '.000+00:00'  # Agregar '.000+00:00'
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
