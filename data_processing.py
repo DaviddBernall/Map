@@ -2,7 +2,6 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
-from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -13,7 +12,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
-        collection_name = "llamadas2019_2"
+        collection_name = "llamadas2019"
     elif year == 2020:
         collection_name = "llamadas2020"
     elif year == 2021:
@@ -28,52 +27,44 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Separar las fechas y horas en el filtro
-    start_date_str = start_datetime.strftime("%d/%m/%Y")
-    end_date_str = end_datetime.strftime("%d/%m/%Y")
-    start_time_str = start_datetime.strftime("%H:%M:%S")
-    end_time_str = end_datetime.strftime("%H:%M:%S")
-
-    # Pipeline para filtrar por fecha y hora
-    pipeline = [
-        {
-            "$match": {
-                "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                    "$gte": start_date_str,
-                    "$lte": end_date_str
-                },
-                "HORA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                    "$gte": start_time_str,
-                    "$lte": end_time_str
-                }
+    # Pipeline básico para contar incidentes filtrados por fecha y hora
+    match_stage = {
+        "$match": {
+            "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
+                "$gte": start_datetime.isoformat() + 'Z',
+                "$lt": end_datetime.isoformat() + 'Z'  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
-    ]
+    }
 
-    # Pipeline para agrupar por opción seleccionada
     if opcion_analisis == "Número de Incidentes":
-        pipeline.append(
+        pipeline = [
+            match_stage,
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
+                    "INCIDENTES": {"$count": {} }  # Contar el número de incidentes
                 }
             }
-        )
+        ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df.rename(columns={'_id': 'LOCALIDAD'}, inplace=True)
         color_var = "INCIDENTES"
         title = "Número de Incidentes por Localidad"
 
     elif opcion_analisis == "Prioridad":
-        pipeline.append(
+        pipeline = [
+            match_stage,
             {
                 "$group": {
                     "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
-                    "INCIDENTES": {"$sum": 1}
+                    "INCIDENTES": {"$count": {} }
                 }
+            },
+            {
+                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
             }
-        )
+        ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])
         df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])
