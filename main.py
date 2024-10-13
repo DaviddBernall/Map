@@ -26,16 +26,26 @@ end_date = st.sidebar.date_input("Fecha de fin", value=datetime(2019, 12, 31), m
 
 # Filtro de hora con un slider (rango de horas)
 st.sidebar.markdown("### Filtro de hora")
-start_time, end_time = st.sidebar.slider(
-    "Selecciona el rango de horas",
-    value=(time(0, 0), time(23, 59)),
-    format="HH:mm"
+start_hour = st.sidebar.slider(
+    "Selecciona la hora de inicio",
+    min_value=0,
+    max_value=23,
+    value=0,  # Hora de inicio por defecto
 )
 
+end_hour = st.sidebar.slider(
+    "Selecciona la hora de fin",
+    min_value=0,
+    max_value=23,
+    value=23,  # Hora de fin por defecto
+)
+
+# Crear las horas completas para el rango
+start_time = time(start_hour, 0)  # Solo la hora completa
+end_time = time(end_hour, 59)      # Termina al final de la hora
 # Combinar fechas y horas seleccionadas
 start_datetime = datetime.combine(start_date, start_time)
 end_datetime = datetime.combine(end_date, end_time)
-end_datetime = end_datetime.replace(hour=end_time.hour, minute=end_time.minute, second=59)
 
 st.write("Fecha de inicio:", start_datetime)
 st.write("Fecha de fin:", end_datetime)
