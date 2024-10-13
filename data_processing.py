@@ -2,6 +2,7 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
+from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -12,7 +13,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     # Determinar la colección a usar según el año de start_datetime
     year = start_datetime.year
     if year == 2019:
-        collection_name = "llamadas2019_2"
+        collection_name = "llamadas2019"
     elif year == 2020:
         collection_name = "llamadas2020"
     elif year == 2021:
@@ -31,8 +32,8 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
     match_stage = {
         "$match": {
             "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime.isoformat() + 'Z',
-                "$lt": end_datetime.isoformat() + 'Z'  # Cambiado a $lt para hacer el rango exclusivo
+                "$gte": start_datetime,
+                "$lt": end_datetime  # Cambiado a $lt para hacer el rango exclusivo
             }
         }
     }
@@ -43,7 +44,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": {"$count": {} }  # Contar el número de incidentes
+                    "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
                 }
             }
         ]
@@ -58,7 +59,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
             {
                 "$group": {
                     "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
-                    "INCIDENTES": {"$count": {} }
+                    "INCIDENTES": {"$sum": 1}
                 }
             },
             {
