@@ -44,10 +44,11 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
+                    "INCIDENTES": {"$sum": {"$cond": [{"$ifNull": ["$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", False]}, 1, 0]}}  # Contar cuando FECHA_INICIO_DESPLAZAMIENTO_MOVIL no sea nulo
                 }
             }
         ]
+        
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df.rename(columns={'_id': 'LOCALIDAD'}, inplace=True)
         color_var = "INCIDENTES"
