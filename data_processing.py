@@ -50,7 +50,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         df.rename(columns={'_id': 'LOCALIDAD'}, inplace=True)
-        color_var = "LOCALIDAD"
+        color_var = "INCIDENTES"
         title = "Número de Incidentes por Localidad"
 
     elif opcion_analisis == "Prioridad":
