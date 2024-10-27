@@ -43,14 +43,17 @@ def get_data(opcion_analisis, year):
             "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
         }
     ]
+    
     df = pd.DataFrame(list(collection.aggregate(pipeline)))
 
     # Imprimir el DataFrame intermedio para depuración
-    print("DataFrame después de la agregación:", df)
+    print("DataFrame después de la agregación:")
+    print(df)
 
     if not df.empty:
-        df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])  # Acceso directo
-        df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])  # Acceso directo
+        # Usar get para evitar KeyError
+        df['LOCALIDAD'] = df['_id'].apply(lambda x: x.get('LOCALIDAD', 'Desconocida'))
+        df['PRIORIDAD'] = df['_id'].apply(lambda x: x.get('PRIORIDAD', 'Desconocida'))
         df.drop(columns=['_id'], inplace=True)
     else:
         df['LOCALIDAD'] = []
