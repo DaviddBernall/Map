@@ -61,14 +61,14 @@ def get_data(opcion_analisis, year):
                 }
             },
             {
-                "$group": {
-                    "_id": None,
-                    "EDAD": {"$push": "$EDAD"},  # Recopila todas las edades en un array
+                "$project": {
+                    "EDAD": 1  # Solo seleccionamos la columna EDAD
                 }
             }
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        df = pd.DataFrame(df['EDAD'].tolist())  # Expandir el array de edades a columnas
+        if df.empty:
+            df = pd.DataFrame(columns=["EDAD"])  # Asegurarnos de que el DataFrame tenga la columna EDAD
         color_var = None
         title = "Distribución de Edades"
 
