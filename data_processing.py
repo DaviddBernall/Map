@@ -31,36 +31,24 @@ def get_data(opcion_analisis, year):
         title = "Número de Incidentes por Localidad"
 
     elif opcion_analisis == "Prioridad":
-    pipeline = [
-        match_stage,
-        {
-            "$group": {
-                "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
-                "INCIDENTES": {"$sum": 1}
+        pipeline = [
+            match_stage,
+            {
+                "$group": {
+                    "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
+                    "INCIDENTES": {"$sum": 1}
+                }
+            },
+            {
+                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
             }
-        },
-        {
-            "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
-        }
-    ]
-    
-    df = pd.DataFrame(list(collection.aggregate(pipeline)))
-
-    # Imprimir el DataFrame intermedio para depuración
-    print("DataFrame después de la agregación:")
-    print(df)
-
-    if not df.empty:
-        # Usar get para evitar KeyError
-        df['LOCALIDAD'] = df['_id'].apply(lambda x: x.get('LOCALIDAD', 'Desconocida'))
-        df['PRIORIDAD'] = df['_id'].apply(lambda x: x.get('PRIORIDAD', 'Desconocida'))
+        ]
+        df = pd.DataFrame(list(collection.aggregate(pipeline)))
+        df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])
+        df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])
         df.drop(columns=['_id'], inplace=True)
-    else:
-        df['LOCALIDAD'] = []
-        df['PRIORIDAD'] = []
-    
-    color_var = None
-    title = "Incidentes por Prioridad y Localidad"
+        color_var = None
+        title = "Incidentes por Prioridad y Localidad"
 
     elif opcion_analisis == "Tipo de Incidente":
         pipeline = [
