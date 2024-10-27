@@ -32,7 +32,6 @@ def get_data(opcion_analisis, year):
 
     elif opcion_analisis == "Prioridad":
         pipeline = [
-            match_stage,
             {
                 "$group": {
                     "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
