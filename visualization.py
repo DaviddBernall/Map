@@ -12,11 +12,12 @@ def create_map(df, geojson, color_var, title):
         center={"lat": 4.2910, "lon": -74.1221}, 
         mapbox_style="carto-positron", 
         zoom=8.6, 
-        title=title
+        title=title,
+        hover_data={color_var: ':.0f'}  # Formato para mostrar el número completo sin 'k' en el tooltip
     )
     
-    # Formato para mostrar los valores completos sin 'k' en miles
-    fig.update_layout(coloraxis_colorbar=dict(tickformat=".0f"))  # .0f muestra los valores completos sin decimales
+    # Configuración de la leyenda para mostrar números completos
+    fig.update_layout(coloraxis_colorbar=dict(tickformat=".0f")) 
     
     return fig
 
