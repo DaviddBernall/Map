@@ -1,6 +1,6 @@
 import streamlit as st
 from data_processing import get_data
-from visualization import create_map, create_bar_chart
+from visualization import create_map, create_bar_chart, create_treemap
 from datetime import datetime, time
 
 # Configuración de la página
