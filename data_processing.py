@@ -73,25 +73,25 @@ def get_data(opcion_analisis, year):
         pipeline = [
             {
                 "$match": {
-                    "EDAD": {"$exists": True}
+                    "EDAD": {"$exists": True, "$ne": None}  # Asegúrate de que la edad no sea NaN
                 }
             },
             {
                 "$group": {
-                    "_id": "$LOCALIDAD",
-                    "EDAD_PROMEDIO": {"$avg": "$EDAD"}
+                    "_id": "$LOCALIDAD",  # Agrupar por localidad
+                    "EDAD_PROMEDIO": {"$avg": "$EDAD"}  # Calcular la edad promedio
                 }
             },
             {
                 "$project": {
-                    "LOCALIDAD": "$_id",
-                    "EDAD_PROMEDIO": 1,
-                    "_id": 0
+                    "LOCALIDAD": "$_id",  # Renombrar la localidad
+                    "EDAD_PROMEDIO": 1,  # Mantener la edad promedio
+                    "_id": 0  # No mostrar el campo _id
                 }
             }
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        color_var = "EDAD_PROMEDIO"
+        color_var = "EDAD_PROMEDIO"  # Cambiar la variable de color a la edad promedio
         title = "Edad Promedio por Localidad"
 
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
