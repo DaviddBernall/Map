@@ -53,6 +53,21 @@ def get_data(opcion_analisis, year):
         color_var = None
         title = "Incidentes por Prioridad y Localidad"
 
+    elif opcion_analisis == "Tipo de Incidente":  # Asegúrate de agregar esta condición
+        pipeline = [
+            match_stage,
+            {
+                "$group": {
+                    "_id": "$TIPO_INCIDENTE",
+                    "INCIDENTES": {"$sum": 1}
+                }
+            }
+        ]
+        df = pd.DataFrame(list(collection.aggregate(pipeline)))
+        df.rename(columns={'_id': 'TIPO_INCIDENTE'}, inplace=True)
+        color_var = "INCIDENTES"
+        title = "Distribución de Incidentes por Tipo"
+        
     elif opcion_analisis == "Edad":
         pipeline = [
             {
