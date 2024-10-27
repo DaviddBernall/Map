@@ -62,7 +62,11 @@ def create_histogram(df, title):
                        nbins=20,  # Puedes ajustar el número de bins según lo necesites
                        text_auto=True)  # Esto mostrará las cuentas en las barras
                        
-    fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')  # Formato de texto en el histograma
-    fig.update_layout(xaxis_title='Edad', yaxis_title='Número de Incidentes')
+    #fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')  # Formato de texto en el histograma
+    fig.update_layout(
+        xaxis_title='Edad',
+        yaxis_title='Número de Incidentes',
+        title=title
+    )
     
     return fig
