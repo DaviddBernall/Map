@@ -1,46 +1,22 @@
+# data_processing.py
 import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
-from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
-def get_data(opcion_analisis, start_datetime, end_datetime):
-    # Determinar la colección a usar según el año de start_datetime
-    year = start_datetime.year
-    if year == 2019:
-        collection_name = "llamadas2019"
-    elif year == 2020:
-        collection_name = "llamadas2020"
-    elif year == 2021:
-        collection_name = "llamadas2021"
-    elif year == 2022:
-        collection_name = "llamadas2022"
-    elif year == 2023:
-        collection_name = "llamadas2023"
-    else:
-        raise ValueError("Año fuera de rango")
-
-    # Acceder a la colección correspondiente
+def get_data(opcion_analisis, year):
+    # Seleccionar la colección correspondiente al año
+    collection_name = f"llamadas{year}"
     collection = db[collection_name]
 
-    # Pipeline básico para contar incidentes filtrados por fecha y hora
-    match_stage = {
-        "$match": {
-            "FECHA_INICIO_DESPLAZAMIENTO_MOVIL": {
-                "$gte": start_datetime,
-                "$lt": end_datetime  # Cambiado a $lt para hacer el rango exclusivo
-            }
-        }
-    }
-
+    # Pipeline para contar incidentes según la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         pipeline = [
-            match_stage,
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
@@ -56,7 +32,6 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
 
     elif opcion_analisis == "Prioridad":
         pipeline = [
-            match_stage,
             {
                 "$group": {
                     "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
@@ -73,10 +48,9 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
         df.drop(columns=['_id'], inplace=True)
         color_var = None
         title = "Incidentes por Prioridad y Localidad"
-        
+
     elif opcion_analisis == "Tipo de Incidente":
         pipeline = [
-            match_stage,
             {
                 "$group": {
                     "_id": "$TIPO_INCIDENTE",  # Agrupar por tipo de incidente
@@ -88,7 +62,7 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
         df.rename(columns={'_id': 'TIPO_INCIDENTE'}, inplace=True)
         color_var = "INCIDENTES"
         title = "Distribución de Incidentes por Tipo"
-        
+
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
         geojson = json.load(f)
