@@ -39,12 +39,13 @@ else:
     elif opcion_analisis == "Edad":
         df, geojson, color_var, title = get_data(opcion_analisis, year)
 
-        # Crear el histograma
-        histogram_fig = create_histogram(df, title)
-    
-        # Crear el mapa coroplético
-        map_fig = create_map(df, geojson, color_var, title)
-    
-        # Mostrar el histograma y el mapa en la misma pestaña
-        st.plotly_chart(histogram_fig)
-        st.plotly_chart(map_fig)
+        # Verifica que hay datos de edad promedio antes de crear el mapa
+        if 'edad_promedio' in df.columns and not df['edad_promedio'].isnull().all():
+            histogram_fig = create_histogram(df, title)
+            if histogram_fig is not None:
+                st.plotly_chart(histogram_fig)
+            
+            map_fig = create_map(df, geojson, color_var, title)
+            st.plotly_chart(map_fig)
+        else:
+            st.warning("No hay datos de edad promedio disponibles para mostrar el mapa.")
