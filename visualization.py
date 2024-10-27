@@ -1,4 +1,5 @@
 import plotly.express as px
+import plotly.graph_objects as go
 
 # Función para crear el mapa coroplético
 def create_map(df, geojson, color_var, title):
@@ -65,5 +66,26 @@ def create_histogram(df, title):
         yaxis_title='Número de Incidentes',
         title=title
     )
+
+    return fig
+
+def create_choropleth_map(df, geojson, color_var, title):
+    fig = go.Figure()
+
+    fig.add_trace(go.Choropleth(
+        geojson=geojson,
+        locations=df['LOCALIDAD'],
+        z=df[color_var],
+        colorscale='Viridis',
+        colorbar_title=color_var,
+        locationmode='geojson-id',
+        zmin=df[color_var].min(),
+        zmax=df[color_var].max(),
+        marker_line_color='black',
+        marker_line_width=0.5,
+    ))
+
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(title=title)
 
     return fig
