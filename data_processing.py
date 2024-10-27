@@ -31,23 +31,33 @@ def get_data(opcion_analisis, year):
         title = "Número de Incidentes por Localidad"
 
     elif opcion_analisis == "Prioridad":
-        pipeline = [
-            {
-                "$group": {
-                    "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
-                    "INCIDENTES": {"$sum": 1}
-                }
-            },
-            {
-                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
+    pipeline = [
+        match_stage,
+        {
+            "$group": {
+                "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
+                "INCIDENTES": {"$sum": 1}
             }
-        ]
-        df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])
-        df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])
+        },
+        {
+            "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
+        }
+    ]
+    df = pd.DataFrame(list(collection.aggregate(pipeline)))
+
+    # Imprimir el DataFrame intermedio para depuración
+    print("DataFrame después de la agregación:", df)
+
+    if not df.empty:
+        df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])  # Acceso directo
+        df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])  # Acceso directo
         df.drop(columns=['_id'], inplace=True)
-        color_var = None
-        title = "Incidentes por Prioridad y Localidad"
+    else:
+        df['LOCALIDAD'] = []
+        df['PRIORIDAD'] = []
+    
+    color_var = None
+    title = "Incidentes por Prioridad y Localidad"
 
     elif opcion_analisis == "Tipo de Incidente":
         pipeline = [
