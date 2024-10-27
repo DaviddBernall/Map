@@ -55,7 +55,7 @@ def get_data(opcion_analisis, year):
         color_var = None
         title = "Incidentes por Prioridad y Localidad"
 
-    elif opcion_analisis == "Tipo de Incidente":  # Asegúrate de agregar esta condición
+    elif opcion_analisis == "Tipo de Incidente":
         pipeline = [
             {
                 "$group": {
