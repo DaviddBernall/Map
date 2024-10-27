@@ -16,8 +16,10 @@ def get_data(opcion_analisis, year):
     # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Pipeline básico para contar incidentes filtrados por fecha y hora
-    pipeline = []
+    # Inicializar variables
+    color_var = None
+    title = ""
+    df = pd.DataFrame()  # Inicializa df como un DataFrame vacío
 
     if opcion_analisis == "Número de Incidentes":
         pipeline = [
@@ -55,7 +57,6 @@ def get_data(opcion_analisis, year):
 
     elif opcion_analisis == "Tipo de Incidente":  # Asegúrate de agregar esta condición
         pipeline = [
-            match_stage,
             {
                 "$group": {
                     "_id": "$TIPO_INCIDENTE",
