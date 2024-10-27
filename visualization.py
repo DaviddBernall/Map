@@ -23,6 +23,9 @@ def create_map(df, geojson, color_var, title):
 
 # Función para crear el gráfico de barras
 def create_bar_chart(df, title):
+    # Formatear las cantidades para agregar separador de miles
+    df['INCIDENTES'] = df['INCIDENTES'].map(lambda x: f"{x:,.0f}")  # Formato con separador de miles
+    
     fig = px.bar(
         df, 
         x='LOCALIDAD', 
@@ -30,12 +33,12 @@ def create_bar_chart(df, title):
         color='PRIORIDAD', 
         title=title, 
         labels={'INCIDENTES': 'Número de Incidentes', 'LOCALIDAD': 'Localidad'},
-        color_discrete_sequence=px.colors.qualitative.Vivid
+        color_discrete_sequence=px.colors.qualitative.Vivid,
+        text='INCIDENTES'  # Usar la columna formateada como texto
     )
     
     # Formatear el eje Y para mostrar separador de miles
     fig.update_layout(yaxis_tickformat=',')  # Separador de miles en el eje Y
-    fig.for_each_trace(lambda t: t.update(text=t.text.apply(lambda x: f"{x:,.0f}")))  # Formato de texto en las barras
 
     return fig
 
