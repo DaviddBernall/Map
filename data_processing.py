@@ -70,24 +70,23 @@ def get_data(opcion_analisis, year):
         title = "Distribución de Incidentes por Tipo"
         
     elif opcion_analisis == "Edad":
-    pipeline = [
-        {
-            "$match": {
-                "EDAD": {"$exists": True}  # Asegúrate de que la edad exista
+        pipeline = [
+            {
+                "$match": {
+                    "EDAD": {"$exists": True}  # Asegúrate de que la edad exista
+                }
+            },
+            {
+                "$project": {
+                    "EDAD": 1  # Solo seleccionamos la columna EDAD
+                }
             }
-        },
-        {
-            "$project": {
-                "EDAD": 1,  # Solo seleccionamos la columna EDAD
-                "LOCALIDAD": 1  # Agregar LOCALIDAD para el mapa coroplético
-            }
-        }
-    ]
-    df = pd.DataFrame(list(collection.aggregate(pipeline)))
-    if df.empty:
-        df = pd.DataFrame(columns=["LOCALIDAD", "EDAD"])  # Asegurarnos de que el DataFrame tenga las columnas necesarias
-    color_var = "EDAD"  # Para el mapa coroplético
-    title = "Distribución de Edades"
+        ]
+        df = pd.DataFrame(list(collection.aggregate(pipeline)))
+        if df.empty:
+            df = pd.DataFrame(columns=["EDAD"])  # Asegurarnos de que el DataFrame tenga la columna EDAD
+        color_var = None
+        title = "Distribución de Edades"
 
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
