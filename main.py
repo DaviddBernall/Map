@@ -12,7 +12,7 @@ st.title("Análisis de Llamadas de Emergencia")
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
     "Selecciona la variable a analizar:",
-    ("Número de Incidentes", "Prioridad")
+    ("Número de Incidentes", "Prioridad", "Tipo de Incidente")
 )
 
 # Filtro de fecha (rango de fechas)
@@ -39,10 +39,13 @@ df, geojson, color_var, title = get_data(opcion_analisis, start_datetime, end_da
 if df.empty:
     st.warning("No se encontraron datos para el rango de fechas y horas seleccionado.")
 else:
-    # Mostrar mapa o gráfico en función de la opción seleccionada
+    # Mostrar mapa, gráfico de barras, o treemap en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
         fig = create_map(df, geojson, color_var, title)
         st.plotly_chart(fig, use_container_width=True)
-    else:
+    elif opcion_analisis == "Prioridad":
         fig = create_bar_chart(df, title)
+        st.plotly_chart(fig, use_container_width=True)
+    elif opcion_analisis == "Tipo de Incidente":
+        fig = create_treemap(df, "Distribución de Incidentes por Tipo")
         st.plotly_chart(fig, use_container_width=True)
