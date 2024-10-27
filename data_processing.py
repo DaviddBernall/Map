@@ -1,8 +1,8 @@
-# data_processing.py
 import pandas as pd
 import json
 from pymongo import MongoClient
 import streamlit as st
+from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
@@ -10,17 +10,21 @@ client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, year):
-    # Seleccionar la colección correspondiente al año
-    collection_name = f"llamadas{year}"
+    # Determinar la colección a usar según el año
+    collection_name = f'llamadas{year}'  # Cambiado para simplificar
+
+    # Acceder a la colección correspondiente
     collection = db[collection_name]
 
-    # Pipeline para contar incidentes según la opción seleccionada
+    # Pipeline básico para contar incidentes filtrados por fecha y hora
+    pipeline = []
+
     if opcion_analisis == "Número de Incidentes":
         pipeline = [
             {
                 "$group": {
                     "_id": "$LOCALIDAD",  # Agrupar por localidad
-                    "INCIDENTES": {"$sum": {"$cond": [{"$ifNull": ["$FECHA_INICIO_DESPLAZAMIENTO_MOVIL", False]}, 1, 0]}}  # Contar cuando FECHA_INICIO_DESPLAZAMIENTO_MOVIL no sea nulo
+                    "INCIDENTES": {"$sum": 1}  # Contar incidentes
                 }
             }
         ]
@@ -48,20 +52,6 @@ def get_data(opcion_analisis, year):
         df.drop(columns=['_id'], inplace=True)
         color_var = None
         title = "Incidentes por Prioridad y Localidad"
-
-    elif opcion_analisis == "Tipo de Incidente":
-        pipeline = [
-            {
-                "$group": {
-                    "_id": "$TIPO_INCIDENTE",  # Agrupar por tipo de incidente
-                    "INCIDENTES": {"$sum": 1}  # Contar cada incidente
-                }
-            }
-        ]
-        df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        df.rename(columns={'_id': 'TIPO_INCIDENTE'}, inplace=True)
-        color_var = "INCIDENTES"
-        title = "Distribución de Incidentes por Tipo"
 
     elif opcion_analisis == "Edad":
         pipeline = [
