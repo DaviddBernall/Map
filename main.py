@@ -1,6 +1,6 @@
 import streamlit as st
 from data_processing import get_data
-from visualization import create_map, create_bar_chart, create_treemap
+from visualization import create_map, create_bar_chart, create_treemap, create_histogram
 from datetime import datetime, time
 
 # Configuración de la página
@@ -12,7 +12,7 @@ st.title("Análisis de Llamadas de Emergencia")
 # Crear un sidebar para seleccionar la variable a analizar
 opcion_analisis = st.sidebar.selectbox(
     "Selecciona la variable a analizar:",
-    ("Número de Incidentes", "Prioridad", "Tipo de Incidente")
+    ("Número de Incidentes", "Prioridad", "Tipo de Incidente","Edad")
 )
 
 # Filtro de año
@@ -35,4 +35,7 @@ else:
         st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Tipo de Incidente":
         fig = create_treemap(df, "Distribución de Incidentes por Tipo")
+        st.plotly_chart(fig, use_container_width=True)
+    elif opcion_analisis == "Edad":
+        fig = create_histogram(df, title)  # Agregar la llamada a create_histogram
         st.plotly_chart(fig, use_container_width=True)
