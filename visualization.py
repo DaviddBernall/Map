@@ -23,13 +23,20 @@ def create_map(df, geojson, color_var, title):
 
 # Función para crear el gráfico de barras
 def create_bar_chart(df, title):
-    fig = px.bar(df, 
-                 x='LOCALIDAD', 
-                 y='INCIDENTES', 
-                 color='PRIORIDAD', 
-                 title=title, 
-                 labels={'INCIDENTES': 'Número de Incidentes', 'LOCALIDAD': 'Localidad'},
-                 color_discrete_sequence=px.colors.qualitative.Vivid)
+    fig = px.bar(
+        df, 
+        x='LOCALIDAD', 
+        y='INCIDENTES', 
+        color='PRIORIDAD', 
+        title=title, 
+        labels={'INCIDENTES': 'Número de Incidentes', 'LOCALIDAD': 'Localidad'},
+        color_discrete_sequence=px.colors.qualitative.Vivid
+    )
+    
+    # Formatear el eje Y para mostrar separador de miles
+    fig.update_layout(yaxis_tickformat=',')  # Separador de miles en el eje Y
+    fig.for_each_trace(lambda t: t.update(text=t.text.apply(lambda x: f"{x:,.0f}")))  # Formato de texto en las barras
+
     return fig
 
 # Función para crear el treemap
