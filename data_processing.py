@@ -63,6 +63,25 @@ def get_data(opcion_analisis, year):
         color_var = "INCIDENTES"
         title = "Distribución de Incidentes por Tipo"
 
+    elif opcion_analisis == "Edad":
+        pipeline = [
+            {
+                "$match": {
+                    "EDAD": {"$exists": True}  # Asegúrate de que la edad exista
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "EDAD": {"$push": "$EDAD"},  # Recopila todas las edades en un array
+                }
+            }
+        ]
+        df = pd.DataFrame(list(collection.aggregate(pipeline)))
+        df = pd.DataFrame(df['EDAD'].tolist())  # Expandir el array de edades a columnas
+        color_var = None
+        title = "Distribución de Edades"
+
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
         geojson = json.load(f)
