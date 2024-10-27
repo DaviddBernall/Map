@@ -26,3 +26,14 @@ def create_bar_chart(df, title):
                  labels={'INCIDENTES': 'Número de Incidentes', 'LOCALIDAD': 'Localidad'},
                  color_discrete_sequence=px.colors.qualitative.Vivid)
     return fig
+
+# Función para crear el treemap
+def create_treemap(df, title):
+    fig = px.treemap(df, 
+                     path=['TIPO_INCIDENTE'], 
+                     values='INCIDENTES', 
+                     title=title,
+                     color='INCIDENTES',
+                     color_continuous_scale='Viridis',
+                     labels={'TIPO_INCIDENTE': 'Tipo de Incidente', 'INCIDENTES': 'Número de Incidentes'})
+    return fig
