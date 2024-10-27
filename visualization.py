@@ -55,19 +55,14 @@ def create_treemap(df, title):
     return fig
 
 def create_histogram(df, title):
-    fig = px.histogram(df, x='EDAD', title=title, nbins=20)
-
-    # Agregar borde a cada barra
-    fig.update_traces(marker=dict(line=dict(color='black', width=1)))  # Color y ancho del borde
-
-    # Actualiza el formato del eje x
-    fig.update_layout(
-        xaxis_title='Edad',
-        yaxis_title='Número de Incidentes',
-        title=title
-    )
-
-    return fig
+    if 'EDAD' in df.columns:  # Asegúrate de que la columna EDAD exista
+        fig = px.histogram(df, x='EDAD', title=title, nbins=30)
+        fig.update_traces(marker=dict(line=dict(width=1, color='black')))  # Borde de las barras
+        return fig
+    else:
+        # Manejo de error si no hay datos de EDAD
+        st.warning("No hay datos de edad disponibles para mostrar el histograma.")
+        return None
 
 def create_choropleth_map(df, geojson, color_var, title):
     fig = go.Figure()
