@@ -73,7 +73,22 @@ def get_data(opcion_analisis, start_datetime, end_datetime):
         df.drop(columns=['_id'], inplace=True)
         color_var = None
         title = "Incidentes por Prioridad y Localidad"
-
+        
+    elif opcion_analisis == "Tipo de Incidente":
+        pipeline = [
+            match_stage,
+            {
+                "$group": {
+                    "_id": "$TIPO_INCIDENTE",  # Agrupar por tipo de incidente
+                    "INCIDENTES": {"$sum": 1}  # Contar cada incidente
+                }
+            }
+        ]
+        df = pd.DataFrame(list(collection.aggregate(pipeline)))
+        df.rename(columns={'_id': 'TIPO_INCIDENTE'}, inplace=True)
+        color_var = "INCIDENTES"
+        title = "Distribución de Incidentes por Tipo"
+        
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
         geojson = json.load(f)
