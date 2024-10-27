@@ -37,5 +37,14 @@ else:
         fig = create_treemap(df, "Distribución de Incidentes por Tipo")
         st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Edad":
-        fig = create_histogram(df, title)
-        st.plotly_chart(fig, use_container_width=True)
+        df, geojson, color_var, title = get_data(opcion_analisis, year)
+
+        # Crear el histograma
+        histogram_fig = create_histogram(df, title)
+    
+        # Crear el mapa coroplético
+        map_fig = create_map(df, geojson, color_var, title)
+    
+        # Mostrar el histograma y el mapa en la misma pestaña
+        st.plotly_chart(histogram_fig)
+        st.plotly_chart(map_fig)
