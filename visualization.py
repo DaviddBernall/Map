@@ -53,20 +53,17 @@ def create_treemap(df, title):
                      labels={'TIPO_INCIDENTE': 'Tipo de Incidente', 'INCIDENTES': 'Número de Incidentes'})
     return fig
 
-# Función para crear el histograma
 def create_histogram(df, title):
-    fig = px.histogram(df, 
-                       x='EDAD', 
-                       title=title, 
-                       labels={'EDAD': 'Edad'}, 
-                       nbins=20,  # Puedes ajustar el número de bins según lo necesites
-                       text_auto=True)  # Esto mostrará las cuentas en las barras
-                       
-    #fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')  # Formato de texto en el histograma
+    fig = px.histogram(df, x='EDAD', title=title, nbins=20)
+
+    # Agregar borde a cada barra
+    fig.update_traces(marker=dict(line=dict(color='black', width=1)))  # Color y ancho del borde
+
+    # Actualiza el formato del eje x
     fig.update_layout(
         xaxis_title='Edad',
         yaxis_title='Número de Incidentes',
         title=title
     )
-    
+
     return fig
