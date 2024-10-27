@@ -77,16 +77,25 @@ def get_data(opcion_analisis, year):
                 }
             },
             {
+                "$group": {
+                    "_id": "$LOCALIDAD",
+                    "EDAD_PROMEDIO": {"$avg": "$EDAD"},  # Calcular la edad promedio por localidad
+                    "NUM_INCIDENTES": {"$sum": 1}  # Contar el número de incidentes
+                }
+            },
+            {
                 "$project": {
-                    "EDAD": 1  # Solo seleccionamos la columna EDAD
+                    "LOCALIDAD": "$_id",
+                    "EDAD_PROMEDIO": 1,
+                    "NUM_INCIDENTES": 1
                 }
             }
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         if df.empty:
-            df = pd.DataFrame(columns=["EDAD"])  # Asegurarnos de que el DataFrame tenga la columna EDAD
-        color_var = None
-        title = "Distribución de Edades"
+            df = pd.DataFrame(columns=["LOCALIDAD", "EDAD_PROMEDIO", "NUM_INCIDENTES"])  # Asegurarnos de que el DataFrame tenga las columnas necesarias
+        color_var = "EDAD_PROMEDIO"  # Para el mapa coroplético
+        title = "Distribución de Edades por Localidad"
 
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
