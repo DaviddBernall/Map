@@ -48,5 +48,6 @@ else:
         # Mostrar el mapa coroplético
         st.plotly_chart(choropleth_fig)
     
-        # Mostrar el histograma
-        st.plotly_chart(histogram_fig)
+        # Mostrar el histograma solo si se creó correctamente
+        if histogram_fig:
+            st.plotly_chart(histogram_fig)
