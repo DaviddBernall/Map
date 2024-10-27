@@ -37,10 +37,19 @@ else:
         fig = create_treemap(df, "Distribución de Incidentes por Tipo")
         st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Edad":
-        # Mostrar el histograma
-        fig_histogram = create_histogram(df, title)
-        st.plotly_chart(fig_histogram, use_container_width=True)
+        # Filtrar valores NaN de 'EDAD'
+        df_filtered = df[df['EDAD'].notna()]
+    
+        # Mostrar el histograma si hay datos
+        if not df_filtered.empty:
+            fig_histogram = create_histogram(df_filtered, title)
+            st.plotly_chart(fig_histogram, use_container_width=True)
+        else:
+            st.warning("No hay datos disponibles para la edad.")
     
         # Mostrar el mapa coroplético de la edad promedio
-        fig_map = create_map(df, geojson, color_var, title)
-        st.plotly_chart(fig_map, use_container_width=True)
+        if not df.empty:
+            fig_map = create_map(df, geojson, color_var, title)
+            st.plotly_chart(fig_map, use_container_width=True)
+        else:
+            st.warning("No hay datos disponibles para mostrar el mapa coroplético.")
