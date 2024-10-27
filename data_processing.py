@@ -73,20 +73,26 @@ def get_data(opcion_analisis, year):
         pipeline = [
             {
                 "$match": {
-                    "EDAD": {"$exists": True}  # Asegúrate de que la edad exista
+                    "EDAD": {"$exists": True}
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$LOCALIDAD",
+                    "EDAD_PROMEDIO": {"$avg": "$EDAD"}
                 }
             },
             {
                 "$project": {
-                    "EDAD": 1  # Solo seleccionamos la columna EDAD
+                    "LOCALIDAD": "$_id",
+                    "EDAD_PROMEDIO": 1,
+                    "_id": 0
                 }
             }
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        if df.empty:
-            df = pd.DataFrame(columns=["EDAD"])  # Asegurarnos de que el DataFrame tenga la columna EDAD
-        color_var = None
-        title = "Distribución de Edades"
+        color_var = "EDAD_PROMEDIO"
+        title = "Edad Promedio por Localidad"
 
     # Cargar el archivo GeoJSON (puede estar predefinido en el proyecto)
     with open("localidades.geojson") as f:
