@@ -13,11 +13,11 @@ def create_map(df, geojson, color_var, title):
         mapbox_style="carto-positron", 
         zoom=8.6, 
         title=title,
-        hover_data={color_var: ':.0f'}  # Formato para mostrar el número completo sin 'k' en el tooltip
+        hover_data={color_var: ':,.0f'}  # Formato para mostrar el número completo con separador de miles
     )
     
-    # Configuración de la leyenda para mostrar números completos
-    fig.update_layout(coloraxis_colorbar=dict(tickformat=".0f")) 
+    # Configuración de la leyenda para mostrar números completos con separador de miles
+    fig.update_layout(coloraxis_colorbar=dict(tickformat=',.0f'))  # Separador de miles en la leyenda
     
     return fig
 
