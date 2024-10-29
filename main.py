@@ -4,7 +4,7 @@ from visualization import create_map, create_bar_chart, create_treemap, create_h
 from datetime import datetime, time
 
 # Configuración de la página
-st.set_page_config(page_title="Análisis de Llamadas", layout="wide")
+st.set_page_config(page_title="Análisis de Llamadas", layout="centered")  # Layout centrado para dispositivos móviles
 
 # Crear un título principal
 st.title("Análisis de Llamadas de Emergencia")
@@ -26,16 +26,21 @@ df, geojson, color_var, title = get_data(opcion_analisis, year)
 if df.empty:
     st.warning("No se encontraron datos para el año seleccionado.")
 else:
-    # Mostrar el gráfico en función de la opción seleccionada
+    # Distribuir visualizaciones en columnas para un diseño más compacto
+    col1, col2 = st.columns(2)
     if opcion_analisis == "Número de Incidentes":
-        fig = create_map(df, geojson, color_var, title)
-        st.plotly_chart(fig, use_container_width=True)
+        with col1:
+            fig = create_map(df, geojson, color_var, title)
+            st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Prioridad":
-        fig = create_bar_chart(df, title)
-        st.plotly_chart(fig, use_container_width=True)
+        with col1:
+            fig = create_bar_chart(df, title)
+            st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Tipo de Incidente":
-        fig = create_treemap(df, "Distribución de Incidentes por Tipo")
-        st.plotly_chart(fig, use_container_width=True)
+        with col1:
+            fig = create_treemap(df, "Distribución de Incidentes por Tipo")
+            st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Edad":
-        fig = create_histogram(df, title)
-        st.plotly_chart(fig, use_container_width=True)
+        with col1:
+            fig = create_histogram(df, title)
+            st.plotly_chart(fig, use_container_width=True)
