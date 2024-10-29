@@ -40,20 +40,18 @@ def get_data(opcion_analisis, year):
         pipeline = [
             {
                 "$group": {
-                    "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},  # Agrupar por localidad y prioridad
+                    "_id": {"LOCALIDAD": "$LOCALIDAD", "PRIORIDAD": "$PRIORIDAD"},
                     "INCIDENTES": {"$sum": 1}
                 }
             },
             {
-                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}  # Ordenar por localidad
+                "$sort": {"_id.LOCALIDAD": 1, "INCIDENTES": -1}
             }
         ]
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
-        df['LOCALIDAD'] = df['_id'].apply(lambda x: x['LOCALIDAD'])
-        df['PRIORIDAD'] = df['_id'].apply(lambda x: x['PRIORIDAD'])
+        df['LOCALIDAD'] = df['_id'].apply(lambda x: x.get('LOCALIDAD') if isinstance(x, dict) else None)
+        df['PRIORIDAD'] = df['_id'].apply(lambda x: x.get('PRIORIDAD') if isinstance(x, dict) else None)
         df.drop(columns=['_id'], inplace=True)
-        color_var = None
-        title = "Incidentes por Prioridad y Localidad"
 
     elif opcion_analisis == "Tipo de Incidente":  # Asegúrate de agregar esta condición
         pipeline = [
