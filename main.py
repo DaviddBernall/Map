@@ -26,21 +26,16 @@ df, geojson, color_var, title = get_data(opcion_analisis, year)
 if df.empty:
     st.warning("No se encontraron datos para el año seleccionado.")
 else:
-    # Distribuir visualizaciones en columnas para un diseño más compacto
-    col1, col2 = st.columns(2)
+    # Mostrar el gráfico en función de la opción seleccionada
     if opcion_analisis == "Número de Incidentes":
-        with col1:
-            fig = create_map(df, geojson, color_var, title)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = create_map(df, geojson, color_var, title)
+        st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Prioridad":
-        with col1:
-            fig = create_bar_chart(df, title)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = create_bar_chart(df, title)
+        st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Tipo de Incidente":
-        with col1:
-            fig = create_treemap(df, "Distribución de Incidentes por Tipo")
-            st.plotly_chart(fig, use_container_width=True)
+        fig = create_treemap(df, "Distribución de Incidentes por Tipo")
+        st.plotly_chart(fig, use_container_width=True)
     elif opcion_analisis == "Edad":
-        with col1:
-            fig = create_histogram(df, title)
-            st.plotly_chart(fig, use_container_width=True)
+        fig = create_histogram(df, title)
+        st.plotly_chart(fig, use_container_width=True)
