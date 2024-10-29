@@ -4,7 +4,7 @@ from visualization import create_map, create_bar_chart, create_treemap, create_h
 from datetime import datetime, time
 
 # Configuración de la página
-st.set_page_config(page_title="Análisis de Llamadas", layout="centered")  # Layout centrado para dispositivos móviles
+st.set_page_config(page_title="Análisis de Llamadas", layout="wide")  # Layout centrado para dispositivos móviles
 
 # Crear un título principal
 st.title("Análisis de Llamadas de Emergencia")
