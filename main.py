@@ -1,55 +1,41 @@
 import streamlit as st
-from datetime import datetime
-import data_loader as dl
-import visualizations as vz
+from data_processing import get_data
+from visualization import create_map, create_bar_chart, create_treemap, create_histogram
+from datetime import datetime, time
 
-# Page Setup
-st.set_page_config(page_title="Bogotá Emergency Calls Dashboard", layout="wide")
+# Configuración de la página
+st.set_page_config(page_title="Análisis de Llamadas", layout="wide")  # Layout centrado para dispositivos móviles
 
-# Sidebar with filters and page selection
-st.sidebar.header("Filters and Navigation")
+# Crear un título principal
+st.title("Análisis de Llamadas de Emergencia")
 
-# Page navigation
-page = st.sidebar.selectbox(
-    "Choose a page",
-    [
-        "Número de llamadas",
-        "Distribución y promedio de edad",
-        "Distribución de tipo de incidentes",
-        "Proporción de género",
-        "Violencia sexual y maltrato"
-    ]
+# Crear un sidebar para seleccionar la variable a analizar
+opcion_analisis = st.sidebar.selectbox(
+    "Selecciona la variable a analizar:",
+    ("Número de Incidentes", "Prioridad", "Tipo de Incidente","Edad")
 )
 
-# Date filter inputs
-start_date = st.sidebar.date_input(
-    'Start Date', datetime(2019, 1, 1), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31)
-)
-end_date = st.sidebar.date_input(
-    'End Date', datetime(2023, 12, 31), min_value=datetime(2019, 1, 1), max_value=datetime(2023, 12, 31)
-)
+# Filtro de año
+st.sidebar.markdown("### Selecciona el año")
+year = st.sidebar.selectbox("Año", options=[2019, 2020, 2021, 2022, 2023])
 
-# Hour range filter
-start_hour = st.sidebar.slider('Start Hour', 0, 23, 0)
-end_hour = st.sidebar.slider('End Hour', 0, 23, 23)
+# Obtener los datos
+df, geojson, color_var, title = get_data(opcion_analisis, year)
 
-# Load data for all visualizations
-df_call_count = dl.get_call_count_data(start_date, end_date, start_hour, end_hour)
-df_avg_age = dl.get_avg_age_data(start_date, end_date, start_hour, end_hour)
-df_age_distribution = dl.get_age_distribution(start_date, end_date, start_hour, end_hour)
-df_incident_type = dl.get_incident_type_data(start_date, end_date, start_hour, end_hour)
-df_gender_distribution = dl.get_gender_distribution(start_date, end_date, start_hour, end_hour)
-df_incident_trend = dl.get_incident_trend_data(start_date, end_date, start_hour, end_hour)
-
-# Render the selected page with the corresponding visualization
-if page == "Número de llamadas":
-    vz.plot_call_count_map(df_call_count)
-elif page == "Distribución y promedio de edad":
-    vz.plot_avg_age_map(df_avg_age)
-    vz.plot_age_distribution(df_age_distribution)
-elif page == "Distribución de tipo de incidentes":
-    vz.plot_incident_type_distribution(df_incident_type)
-elif page == "Proporción de género":
-    vz.plot_gender_proportion(df_gender_distribution)
-elif page == "Violencia sexual y maltrato":
-    vz.plot_incident_trend(df_incident_trend)
+# Verificar si el DataFrame tiene datos
+if df.empty:
+    st.warning("No se encontraron datos para el año seleccionado.")
+else:
+    # Mostrar el gráfico en función de la opción seleccionada
+    if opcion_analisis == "Número de Incidentes":
+        fig = create_map(df, geojson, color_var, title)
+        st.plotly_chart(fig, use_container_width=True)
+    elif opcion_analisis == "Prioridad":
+        fig = create_bar_chart(df, title)
+        st.plotly_chart(fig, use_container_width=True)
+    elif opcion_analisis == "Tipo de Incidente":
+        fig = create_treemap(df, "Distribución de Incidentes por Tipo")
+        st.plotly_chart(fig, use_container_width=True)
+    elif opcion_analisis == "Edad":
+        fig = create_histogram(df, title)
+        st.plotly_chart(fig, use_container_width=True)
