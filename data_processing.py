@@ -5,8 +5,8 @@ import streamlit as st
 from datetime import datetime
 
 # Conexión a MongoDB desde los Secrets de Streamlit
-client = MongoClient("mongodb://localhost:27017/")
-db = client["llamadas123"]
+MONGODB_URI = st.secrets["MONGODB"]["URI"]
+client = MongoClient(MONGODB_URI)
 
 def get_data(opcion_analisis, year):
     # Determinar la colección a usar según el año
