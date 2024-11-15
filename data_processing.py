@@ -71,17 +71,15 @@ def get_data(opcion_analisis, year):
         pipeline = [
             {
                 "$match": {
-                    "EDAD": {"$exists": True, "$gt": 0}  # Excluir edades no válidas
+                    "EDAD": {"$exists": True}  # Asegúrate de que la edad exista
                 }
             },
             {
-                "$group": {
-                    "_id": "$LOCALIDAD",
-                    "EDAD_PROMEDIO": {"$avg": "$EDAD"}  # Calcular promedio de edad
+                "$project": {
+                    "EDAD": 1  # Solo seleccionamos la columna EDAD
                 }
             }
         ]
-        
         df = pd.DataFrame(list(collection.aggregate(pipeline)))
         if df.empty:
             df = pd.DataFrame(columns=["EDAD"])  # Asegurarnos de que el DataFrame tenga la columna EDAD
