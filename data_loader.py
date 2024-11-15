@@ -6,6 +6,7 @@ from pymongo import MongoClient
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
+collection = db['llamadas']  # Replace with your collection name
 
 def get_filtered_data(start_date, end_date, start_hour, end_hour):
     # Common filter for date and hour range
