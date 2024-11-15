@@ -7,6 +7,7 @@ from datetime import datetime
 # Conexión a MongoDB desde los Secrets de Streamlit
 MONGODB_URI = st.secrets["MONGODB"]["URI"]
 client = MongoClient(MONGODB_URI)
+db = client['123']  # Base de datos de llamadas
 
 def get_data(opcion_analisis, year):
     # Determinar la colección a usar según el año
