@@ -2,10 +2,10 @@ import pandas as pd
 from datetime import datetime
 from pymongo import MongoClient
 
-# MongoDB Connection Setup
-client = MongoClient("mongodb+srv://lsbdavidbernal:o8WZVSzPRkUr5NXo@llamadas123.ke4nc.mongodb.net/?retryWrites=true&w=majority&appName=Llamadas123")
+# Conexión a MongoDB desde los Secrets de Streamlit
+MONGODB_URI = st.secrets["MONGODB"]["URI"]
+client = MongoClient(MONGODB_URI)
 db = client['Llamadas123']  # Base de datos de llamadas
-collection = db['llamadas']  # Replace with your collection name
 
 def get_filtered_data(start_date, end_date, start_hour, end_hour):
     # Common filter for date and hour range
