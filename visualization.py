@@ -9,7 +9,7 @@ def create_map(df, geojson, color_var, title):
         locations="LOCALIDAD", 
         featureidkey="properties.Nombre de la localidad", 
         color=color_var,  
-        color_continuous_scale="Viridis", 
+        color_continuous_scale="Blues", 
         center={"lat": 4.2910, "lon": -74.1221}, 
         mapbox_style="carto-positron", 
         zoom=8.6, 
