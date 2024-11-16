@@ -95,7 +95,6 @@ def create_segmented_bar_chart(df, title):
     fig.update_layout(
         legend_title="Género",
         xaxis=dict(title="Año"),
-        yaxis=dict(title="Cantidad de Incidentes"),
         margin=dict(t=50, b=50, l=50, r=50),
         height=600,
     )
