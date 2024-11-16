@@ -85,7 +85,7 @@ def create_segmented_bar_chart(df, title):
         color="GENERO",
         facet_col="TIPO_INCIDENTE",
         title=title,
-        labels={"count": "Cantidad de Incidentes", "YEAR": "Año", "GENERO": "Género"},
+        labels={"YEAR": "Año", "GENERO": "Género"},
         barmode="stack",  # Barras segmentadas
         text="count"      # Mostrar los valores
     )
